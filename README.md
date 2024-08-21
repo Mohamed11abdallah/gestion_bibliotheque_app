@@ -83,3 +83,7 @@ import { ref } from 'vue';
         1. Clonez le dépôt.
         2. Installez les dépendances avec npm install.
         3. Démarrez l'application avec npm run dev.
+
+## Authors
+
+[Mohamed Abdallahi M'khaitir, ](https://github.com/Mohamed11abdallah) 

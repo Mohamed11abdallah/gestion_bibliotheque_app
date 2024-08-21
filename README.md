@@ -23,19 +23,19 @@ import { ref } from 'vue';
 </script>
 
 <style scoped>
-/* Style */
+/* Style pour la gestion des livres */
 </style>
 ```
 
 ### 2. **Gestion des Membres**
-- Ajouter un Membre : Formulaire pour ajouter un nouveau membre avec un nom et un email.
-- Voir les Détails : Affichage des informations d'un membre.
-- Éditer un Membre : Modifier les informations d'un membre existant.
-- Supprimer un Membre : Retirer un membre de la liste.
+- **Ajouter un Membre** : Formulaire pour ajouter un nouveau membre avec un nom et un email.
+- **Voir les Détails** : Affichage des informations d'un membre.
+- **Éditer un Membre** : Modifier les informations d'un membre existant.
+- **Supprimer un Membre** : Retirer un membre de la liste.
 
 ```vue
 <template>
-  <!-- Vue.js code for managing members -->
+  <!-- Vue.js code pour gérer les membres -->
 </template>
 
 <script setup>
@@ -45,19 +45,19 @@ import { ref } from 'vue';
 </script>
 
 <style scoped>
-/* Styling for member management */
+/* Style pour la gestion des membres */
 </style>
 ```
 
 ### 3. **Gestion des Prêts**
-- Enregistrer un Prêt : Formulaire pour enregistrer un prêt avec l'ID du livre, l'ID du membre et la date de prêt.
-- Voir les Détails : Affichage des informations sur un prêt.
-- Éditer un Prêt : Modifier les détails d'un prêt existant.
-- Supprimer un Prêt : Retirer un prêt de la liste.
+- **Enregistrer un Prêt** : Formulaire pour enregistrer un prêt avec l'ID du livre, l'ID du membre et la date de prêt.
+- **Voir les Détails** : Affichage des informations sur un prêt.
+- **Éditer un Prêt** : Modifier les détails d'un prêt existant.
+- **Supprimer un Prêt** : Retirer un prêt de la liste.
 
 ```vue
 <template>
-  <!-- Vue.js code for managing loans -->
+  <!-- Vue.js code pour gérer les prets -->
 </template>
 
 <script setup>
@@ -67,7 +67,7 @@ import { ref } from 'vue';
 </script>
 
 <style scoped>
-/* Styling for loan management */
+/* Style pour la gestion des prets */
 </style>
 ```
 

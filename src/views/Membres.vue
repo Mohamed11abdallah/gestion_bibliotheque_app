@@ -3,8 +3,8 @@
         <div>
             <h1>Membres</h1>
 
-            <!-- Formulaire pour ajouter un membre -->
-            <div class="mb-4">
+            <!-- Formulaire pour ajouter un membre (affiché uniquement si aucun membre n'est en cours de visualisation) -->
+            <div class="mb-4" v-if="!selectedMember && !editingMember">
                 <h2>Ajouter un Nouveau Membre</h2>
                 <form @submit.prevent="addMember">
                     <div class="form-group mb-3">
@@ -35,10 +35,9 @@
                             <td>{{ member.name }}</td>
                             <td>{{ member.email }}</td>
                             <td>
-                                <button class="btn btn-info btn-sm" @click="viewDetails(member)">Voir</button>
-                                <button class="btn btn-warning btn-sm" @click="editMember(member)">Éditer</button>
-                                <button class="btn btn-danger btn-sm"
-                                    @click="deleteMember(member.id)">Supprimer</button>
+                                <button class="btn btn-info btn-sm me-2" @click="viewDetails(member)">Voir</button>
+                                <button class="btn btn-warning btn-sm me-2" @click="editMember(member)">Éditer</button>
+                                <button class="btn btn-danger btn-sm" @click="deleteMember(member.id)">Supprimer</button>
                             </td>
                         </tr>
                     </tbody>
@@ -60,8 +59,7 @@
                             <p><strong>Email:</strong> {{ selectedMember.email }}</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary"
-                                @click="selectedMember = null">Fermer</button>
+                            <button type="button" class="btn btn-secondary" @click="selectedMember = null">Fermer</button>
                         </div>
                     </div>
                 </div>
@@ -77,15 +75,14 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="editEmail">Email</label>
-                        <input type="email" id="editEmail" v-model="editingMember.email" class="form-control"
-                            required />
+                        <input type="email" id="editEmail" v-model="editingMember.email" class="form-control" required />
                     </div>
                     <button type="submit" class="btn btn-primary">Mettre à Jour</button>
+                    <button type="button" class="btn btn-secondary" @click="editingMember = null">Annuler</button>
                 </form>
             </div>
         </div>
     </div>
-
 </template>
 
 <script setup>
@@ -116,6 +113,7 @@ function viewDetails(member) {
 // Fonction pour éditer un membre
 function editMember(member) {
     editingMember.value = { ...member };
+    selectedMember.value = null; // Fermer la vue des détails lorsque l'édition commence
 }
 
 // Fonction pour mettre à jour un membre
@@ -123,7 +121,7 @@ function updateMember() {
     const index = members.value.findIndex(m => m.id === editingMember.value.id);
     if (index !== -1) {
         members.value[index] = { ...editingMember.value };
-        editingMember.value = null;
+        editingMember.value = null; // Réinitialiser le mode édition après la mise à jour
     }
 }
 

@@ -3,10 +3,14 @@
         <div>
             <h1>Livres</h1>
 
-            <!-- Formulaire pour ajouter un livre -->
-            <div class="mb-4">
+            <!-- Formulaire pour ajouter un livre (affiché uniquement si aucun livre n'est en cours de visualisation ou d'édition) -->
+            <div class="mb-4" v-if="!selectedBook && !editingBook">
                 <h2>Ajouter un Nouveau Livre</h2>
                 <form @submit.prevent="addBook">
+                    <div class="form-group mb-3">
+                        <label for="id">ID</label>
+                        <input type="number" id="id" v-model="newBook.id" class="form-control" required />
+                    </div>
                     <div class="form-group mb-3">
                         <label for="title">Titre</label>
                         <input type="text" id="title" v-model="newBook.title" class="form-control" required />
@@ -29,6 +33,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Titre</th>
                             <th>Auteur</th>
                             <th>Année</th>
@@ -37,12 +42,13 @@
                     </thead>
                     <tbody>
                         <tr v-for="book in books" :key="book.id">
+                            <td>{{ book.id }}</td>
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.year }}</td>
                             <td>
-                                <button class="btn btn-info btn-sm" @click="viewDetails(book)">Voir</button>
-                                <button class="btn btn-warning btn-sm" @click="editBook(book)">Éditer</button>
+                                <button class="btn btn-info btn-sm me-2" @click="viewDetails(book)">Voir</button>
+                                <button class="btn btn-warning btn-sm me-2" @click="editBook(book)">Éditer</button>
                                 <button class="btn btn-danger btn-sm" @click="deleteBook(book.id)">Supprimer</button>
                             </td>
                         </tr>
@@ -50,7 +56,7 @@
                 </table>
             </div>
 
-            <!-- Modal pour voir les détails d'un livre -->
+            <!-- Modal pour voir les détails d'un livre (affiché uniquement en mode visualisation) -->
             <div v-if="selectedBook" class="modal fade show d-block" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -61,6 +67,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
+                            <p><strong>ID:</strong> {{ selectedBook.id }}</p>
                             <p><strong>Titre:</strong> {{ selectedBook.title }}</p>
                             <p><strong>Auteur:</strong> {{ selectedBook.author }}</p>
                             <p><strong>Année:</strong> {{ selectedBook.year }}</p>
@@ -72,7 +79,7 @@
                 </div>
             </div>
 
-            <!-- Formulaire pour éditer un livre -->
+            <!-- Formulaire pour éditer un livre (affiché uniquement en mode édition) -->
             <div v-if="editingBook" class="mt-4">
                 <h2>Éditer le Livre</h2>
                 <form @submit.prevent="updateBook">
@@ -88,12 +95,12 @@
                         <label for="editYear">Année</label>
                         <input type="number" id="editYear" v-model="editingBook.year" class="form-control" required />
                     </div>
-                    <button type="submit" class="btn btn-primary">Mettre à Jour</button>
+                    <button type="submit" class="btn btn-primary me-2">Mettre à Jour</button>
+                    <button type="button" class="btn btn-secondary" @click="editingBook = null">Annuler</button>
                 </form>
             </div>
         </div>
     </div>
-
 </template>
 
 <script setup>
@@ -105,25 +112,44 @@ const books = ref([
     { id: 2, title: 'Livre 2', author: 'Auteur 2', year: 2022 }
 ]);
 
-const newBook = ref({ title: '', author: '', year: '' });
+const newBook = ref({ id: generateUniqueId(), title: '', author: '', year: '' });
 const selectedBook = ref(null);
 const editingBook = ref(null);
 
+// Fonction pour vérifier si un ID est unique
+function isUniqueId(id) {
+    return !books.value.some(book => book.id === id);
+}
+
+// Fonction pour générer un ID unique et positif
+function generateUniqueId() {
+    let id = books.value.length ? Math.max(...books.value.map(b => b.id)) + 1 : 1;
+    while (!isUniqueId(id)) {
+        id++;
+    }
+    return id;
+}
+
 // Fonction pour ajouter un livre
 function addBook() {
-    const id = books.value.length ? Math.max(books.value.map(b => b.id)) + 1 : 1;
-    books.value.push({ ...newBook.value, id });
-    newBook.value = { title: '', author: '', year: '' };
+    if (!isUniqueId(newBook.value.id) || newBook.value.id <= 0) {
+        alert("L'ID doit être unique et positif.");
+    } else {
+        books.value.push({ ...newBook.value });
+        newBook.value = { id: generateUniqueId(), title: '', author: '', year: '' };
+    }
 }
 
 // Fonction pour voir les détails d'un livre
 function viewDetails(book) {
     selectedBook.value = book;
+    editingBook.value = null; // Assurez-vous que le formulaire d'édition est caché
 }
 
 // Fonction pour éditer un livre
 function editBook(book) {
     editingBook.value = { ...book };
+    selectedBook.value = null; // Fermer la vue des détails lorsque l'édition commence
 }
 
 // Fonction pour mettre à jour un livre
@@ -131,7 +157,7 @@ function updateBook() {
     const index = books.value.findIndex(b => b.id === editingBook.value.id);
     if (index !== -1) {
         books.value[index] = { ...editingBook.value };
-        editingBook.value = null;
+        editingBook.value = null; // Réinitialiser le mode édition après la mise à jour
     }
 }
 
@@ -140,9 +166,3 @@ function deleteBook(id) {
     books.value = books.value.filter(b => b.id !== id);
 }
 </script>
-
-<style scoped>
-.modal {
-    display: block;
-}
-</style>

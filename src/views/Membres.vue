@@ -25,6 +25,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Nom</th>
                             <th>Email</th>
                             <th>Actions</th>
@@ -32,6 +33,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="member in members" :key="member.id">
+                            <td>{{ member.id }}</td>
                             <td>{{ member.name }}</td>
                             <td>{{ member.email }}</td>
                             <td>
@@ -55,6 +57,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
+                            <p><strong>ID:</strong> {{ selectedMember.id }}</p>
                             <p><strong>Nom:</strong> {{ selectedMember.name }}</p>
                             <p><strong>Email:</strong> {{ selectedMember.email }}</p>
                         </div>
@@ -98,10 +101,16 @@ const newMember = ref({ name: '', email: '' });
 const selectedMember = ref(null);
 const editingMember = ref(null);
 
+// Fonction pour générer un ID unique et positif
+function generateUniqueId() {
+    const ids = members.value.map(m => m.id);
+    return ids.length ? Math.max(...ids) + 1 : 1;
+}
+
 // Fonction pour ajouter un membre
 function addMember() {
-    const id = members.value.length ? Math.max(members.value.map(m => m.id)) + 1 : 1;
-    members.value.push({ ...newMember.value, id });
+    const id = generateUniqueId();  // Générer un ID unique
+    members.value.push({ id, ...newMember.value });
     newMember.value = { name: '', email: '' };
 }
 

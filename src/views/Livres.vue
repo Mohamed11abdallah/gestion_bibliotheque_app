@@ -8,10 +8,6 @@
                 <h2>Ajouter un Nouveau Livre</h2>
                 <form @submit.prevent="addBook">
                     <div class="form-group mb-3">
-                        <label for="id">ID</label>
-                        <input type="number" id="id" v-model="newBook.id" class="form-control" required />
-                    </div>
-                    <div class="form-group mb-3">
                         <label for="title">Titre</label>
                         <input type="text" id="title" v-model="newBook.title" class="form-control" required />
                     </div>
@@ -112,32 +108,21 @@ const books = ref([
     { id: 2, title: 'Livre 2', author: 'Auteur 2', year: 2022 }
 ]);
 
-const newBook = ref({ id: generateUniqueId(), title: '', author: '', year: '' });
+const newBook = ref({ title: '', author: '', year: '' });
 const selectedBook = ref(null);
 const editingBook = ref(null);
 
-// Fonction pour vérifier si un ID est unique
-function isUniqueId(id) {
-    return !books.value.some(book => book.id === id);
-}
-
 // Fonction pour générer un ID unique et positif
 function generateUniqueId() {
-    let id = books.value.length ? Math.max(...books.value.map(b => b.id)) + 1 : 1;
-    while (!isUniqueId(id)) {
-        id++;
-    }
-    return id;
+    const ids = books.value.map(book => book.id);
+    return ids.length ? Math.max(...ids) + 1 : 1;
 }
 
 // Fonction pour ajouter un livre
 function addBook() {
-    if (!isUniqueId(newBook.value.id) || newBook.value.id <= 0) {
-        alert("L'ID doit être unique et positif.");
-    } else {
-        books.value.push({ ...newBook.value });
-        newBook.value = { id: generateUniqueId(), title: '', author: '', year: '' };
-    }
+    const id = generateUniqueId();  // Générer un ID unique
+    books.value.push({ id, ...newBook.value });
+    newBook.value = { title: '', author: '', year: '' };
 }
 
 // Fonction pour voir les détails d'un livre
